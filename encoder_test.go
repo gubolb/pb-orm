@@ -9,8 +9,8 @@ import (
 	"github.com/pocketbase/pocketbase/tests"
 )
 
-func setupEncodeTests() (clean func(), err error) {
-	testApp, err := tests.NewTestApp()
+func setupEncodeTests() (testApp *tests.TestApp, err error) {
+	testApp, err = tests.NewTestApp()
 	if err != nil {
 		return nil, fmt.Errorf("could not create testApp: %w", err)
 	}
@@ -19,19 +19,18 @@ func setupEncodeTests() (clean func(), err error) {
 		return nil, fmt.Errorf("could not save collection: %w", err)
 	}
 
-	Setup(testApp.Dao())
-	return testApp.Cleanup, nil
+	return
 }
 
 func TestEncode(t *testing.T) {
-	if clean, err := setupEncodeTests(); err != nil {
+	testApp, err := setupEncodeTests()
+	if err != nil {
 		t.Fatalf("could not prepate esting environment: %v", err)
-	} else if clean != nil {
-		defer clean()
 	}
+	defer testApp.Cleanup()
 
 	entity := entityExample
-	actual, err := Encode(&entity)
+	actual, err := Encode(&entity, testApp.Dao())
 	if err != nil {
 		t.Errorf("expected no error, got %v", err)
 	}
@@ -47,14 +46,14 @@ func TestEncode(t *testing.T) {
 }
 
 func TestEncodeWithZeroValue(t *testing.T) {
-	if clean, err := setupEncodeTests(); err != nil {
+	testApp, err := setupEncodeTests()
+	if err != nil {
 		t.Fatalf("could not prepate esting environment: %v", err)
-	} else if clean != nil {
-		defer clean()
 	}
+	defer testApp.Cleanup()
 
 	entity := EntityWithAllPBTypes{}
-	actual, err := Encode(&entity)
+	actual, err := Encode(&entity, testApp.Dao())
 	if err != nil {
 		t.Errorf("expected no error, got %v", err)
 	}
@@ -70,15 +69,15 @@ func TestEncodeWithZeroValue(t *testing.T) {
 }
 
 func TestEncodeAll(t *testing.T) {
-	if clean, err := setupEncodeTests(); err != nil {
+	testApp, err := setupEncodeTests()
+	if err != nil {
 		t.Fatalf("could not prepate esting environment: %v", err)
-	} else if clean != nil {
-		defer clean()
 	}
+	defer testApp.Cleanup()
 
 	entity := EntityWithAllPBTypes{}
 
-	actual, err := EncodeAll([]*EntityWithAllPBTypes{&entity, &entity})
+	actual, err := EncodeAll([]*EntityWithAllPBTypes{&entity, &entity}, testApp.Dao())
 	if err != nil {
 		t.Errorf("expected no error, got %v", err)
 	}

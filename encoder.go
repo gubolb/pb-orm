@@ -7,14 +7,15 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/pocketbase/pocketbase/daos"
 	"github.com/pocketbase/pocketbase/models"
 	"github.com/pocketbase/pocketbase/models/schema"
 )
 
-func EncodeAll[T Entity](entities []*T) ([]*models.Record, error) {
+func EncodeAll[T Entity](entities []*T, dao *daos.Dao) ([]*models.Record, error) {
 	records := make([]*models.Record, len(entities))
 	for i, e := range entities {
-		record, err := Encode(e)
+		record, err := Encode(e, dao)
 		if err != nil {
 			return nil, fmt.Errorf("could not encode %d element: %w", i, err)
 		}
@@ -23,16 +24,16 @@ func EncodeAll[T Entity](entities []*T) ([]*models.Record, error) {
 	return records, nil
 }
 
-func Encode[T Entity](entity *T) (*models.Record, error) {
-	if defaultDao == nil {
-		return nil, ErrNotInit
+func Encode[T Entity](entity *T, dao *daos.Dao) (*models.Record, error) {
+	if dao == nil {
+		return nil, fmt.Errorf("could not encode: dao is nil")
 	}
 
 	if entity == nil {
 		return nil, fmt.Errorf("could not encode nil entity")
 	}
 
-	coll, err := defaultDao.FindCollectionByNameOrId((*entity).CollectionName())
+	coll, err := dao.FindCollectionByNameOrId((*entity).CollectionName())
 	if err != nil {
 		return nil, fmt.Errorf("could not get entity collection: %w", err)
 	} else if coll == nil {
