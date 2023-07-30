@@ -54,7 +54,7 @@ func Encode[T Entity](entity *T, dao *daos.Dao) (*models.Record, error) {
 		field := reflect.TypeOf(entity).Elem().Field(i)
 		columnName := extractOrmNameFromTag(string(field.Tag))
 
-		fieldType := coll.Schema.GetFieldByName(columnName)
+		fieldType := fieldFromColumnName(coll.Schema, columnName)
 		if fieldType == nil {
 			continue
 		}

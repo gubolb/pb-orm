@@ -23,6 +23,8 @@ type Obj struct {
 }
 
 type EntityWithAllPBTypes struct {
+	Id string `orm:"id"`
+
 	Text               string               `orm:"text,omitempty"`
 	TextUnderlyingType StringUnderlyingType `orm:"text_underlying,omitempty"`
 
@@ -58,7 +60,6 @@ type EntityWithAllPBTypes struct {
 
 func (_ EntityWithAllPBTypes) CollectionName() string {
 	return "foo"
-
 }
 
 // Collection - for testing purpose only, note that this method is not part of Entity interface.
@@ -113,6 +114,8 @@ func init() {
 	}
 
 	entityExample = EntityWithAllPBTypes{
+		Id: "i7iedw7au80qljq",
+
 		Text:               "foo",
 		TextUnderlyingType: Foo,
 
@@ -147,6 +150,8 @@ func init() {
 	}
 
 	recordExample = models.NewRecord(EntityWithAllPBTypes{}.Collection())
+	recordExample.SetId("i7iedw7au80qljq")
+
 	recordExample.Set("text", "foo")
 	recordExample.Set("text_underlying", "underlying")
 

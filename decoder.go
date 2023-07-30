@@ -65,7 +65,7 @@ func Decode[T Entity](record *models.Record, entity *T) error {
 			continue
 		}
 
-		fieldType := collSchema.GetFieldByName(columnName)
+		fieldType := fieldFromColumnName(collSchema, columnName)
 		if fieldType == nil {
 			continue
 		}
