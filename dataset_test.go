@@ -47,9 +47,10 @@ type EntityWithAllPBTypes struct {
 	Editor string     `orm:"editor,omitempty"`
 	Date   *time.Time `orm:"date,omitempty"`
 
-	JsonAsStringArray []string `orm:"json_string_array,omitempty"`
-	JsonAsObject      Obj      `orm:"json_object,omitempty"`
-	JsonAsObjectArray []Obj    `orm:"json_object_array,omitempty"`
+	JsonAsStringArray      []string `orm:"json_string_array,omitempty"`
+	JsonAsObject           Obj      `orm:"json_object,omitempty"`
+	JsonAsObjectArray      []Obj    `orm:"json_object_array,omitempty"`
+	JsonAsStringArrayEmpty []string `orm:"json_string_array_empty,omitempty"`
 
 	SingleRelation   string   `orm:"single_relation,omitempty"`
 	MultipleRelation []string `orm:"multiple_relation,omitempty"`
@@ -90,6 +91,7 @@ func (_ EntityWithAllPBTypes) Collection() *models.Collection {
 		&schema.SchemaField{Name: "json_string_array", Type: schema.FieldTypeJson},
 		&schema.SchemaField{Name: "json_object", Type: schema.FieldTypeJson},
 		&schema.SchemaField{Name: "json_object_array", Type: schema.FieldTypeJson},
+		&schema.SchemaField{Name: "json_string_array_empty", Type: schema.FieldTypeJson},
 
 		&schema.SchemaField{Name: "single_relation", Type: schema.FieldTypeRelation, Options: &schema.RelationOptions{MinSelect: pointer(0), MaxSelect: pointer(1)}},
 		&schema.SchemaField{Name: "multiple_relation", Type: schema.FieldTypeRelation, Options: &schema.RelationOptions{MinSelect: pointer(0), MaxSelect: pointer(10)}},
@@ -138,9 +140,10 @@ func init() {
 		Editor: "# Foo\nBar",
 		Date:   &_date,
 
-		JsonAsStringArray: []string{"foo", "bar"},
-		JsonAsObject:      Obj{Foo: 12, Bar: "qux"},
-		JsonAsObjectArray: []Obj{{Foo: 1, Bar: "1"}, {Foo: 2, Bar: "2"}},
+		JsonAsStringArray:      []string{"foo", "bar"},
+		JsonAsObject:           Obj{Foo: 12, Bar: "qux"},
+		JsonAsObjectArray:      []Obj{{Foo: 1, Bar: "1"}, {Foo: 2, Bar: "2"}},
+		JsonAsStringArrayEmpty: []string{},
 
 		SingleRelation:   "foo",
 		MultipleRelation: []string{"foo", "qux"},
@@ -177,6 +180,7 @@ func init() {
 	recordExample.Set("json_string_array", `["foo","bar"]`)
 	recordExample.Set("json_object", `{"foo":12,"bar":"qux"}`)
 	recordExample.Set("json_object_array", `[{"foo":1,"bar":"1"},{"foo":2,"bar":"2"}]`)
+	recordExample.Set("json_string_array_empty", `[]`)
 
 	recordExample.Set("single_relation", "foo")
 	recordExample.Set("multiple_relation", `["foo","qux"]`)
