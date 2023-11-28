@@ -109,6 +109,10 @@ func Decode[T Entity](record *models.Record, entity *T) error {
 		case schema.FieldTypeJson:
 			bytesVal := []byte(fmt.Sprint(rawValue))
 
+			if len(bytesVal) == 0 {
+				break
+			}
+
 			val := reflect.New(entityField.Type()).Interface()
 			if err := json.Unmarshal(bytesVal, val); err != nil {
 				log.Printf("could not unmarshal %s: %v", string(bytesVal), err)
